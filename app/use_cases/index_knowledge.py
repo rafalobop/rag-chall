@@ -7,6 +7,7 @@ from app.domain.interfaces import IVectorDatabase
 def count_tokens(text: str) -> int:
     """Helper to count or estimate token count using tiktoken or simple fallback."""
     try:
+        # pyrefly: ignore [missing-import]
         import tiktoken
         encoding = tiktoken.get_encoding("cl100k_base")
         return len(encoding.encode(text))

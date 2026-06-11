@@ -16,6 +16,11 @@ class IVectorDatabase(ABC):
         pass
 
     @abstractmethod
+    def count(self) -> int:
+        """Returns the number of stored chunks in the collection."""
+        pass
+
+    @abstractmethod
     def clear(self) -> None:
         """Clears all stored chunks from the database (mainly for testing/clean restarts)."""
         pass

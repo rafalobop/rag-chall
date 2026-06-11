@@ -14,6 +14,9 @@ class MockVectorDB(IVectorDatabase):
     def query(self, query_text: str, limit: int = 3) -> List[Chunk]:
         return self.chunks[:limit]
 
+    def count(self) -> int:
+        return len(self.chunks)
+
     def clear(self) -> None:
         self.chunks.clear()
 
