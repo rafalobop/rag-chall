@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "f51b6890-482a-4632-a5ea-5d5bfeb8ef13",
+		"name": "RAG Challenge API",
+		"description": "Colección de Postman para probar el endpoint de Ingesta Dinámica y Consultas RAG.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Ingestar Documento Dinámico",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Ficción Espacial: En el planeta Zenthoria, Zara descubrió el artefacto místico que brinda armonía.\",\n    \"metadata\": {\n        \"origin\": \"postman-manual-test\"\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/documents",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta RAG - Español (Zara)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"¿Qué hizo Zara en Zenthoria?\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta RAG - Inglés (Flor Mágica)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"Tell me about the magic flower Luz de Luna\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta RAG - Portugués (Emma)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"O que a Emma faz com o relógio antigo?\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"query"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta RAG - Fuera de Contexto (Fallback)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"¿Cuál es la receta de la pizza italiana?\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/query",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"query"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
