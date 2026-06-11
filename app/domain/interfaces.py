@@ -3,42 +3,42 @@ from typing import List
 from app.domain.entities import Chunk, Document
 
 class IVectorDatabase(ABC):
-    """Abstract interface for storing and querying vector embeddings."""
+    """Interfaz abstracta para almacenar y consultar embeddings vectoriales."""
 
     @abstractmethod
     def add_chunks(self, chunks: List[Chunk]) -> None:
-        """Embeds and persists chunks in the vector database."""
+        """Vectoriza y persiste fragmentos en la base de datos vectorial."""
         pass
 
     @abstractmethod
     def query(self, query_text: str, limit: int = 3) -> List[Chunk]:
-        """Performs semantic search to find chunks matching the query."""
+        """Realiza una búsqueda semántica para encontrar fragmentos que coincidan con la consulta."""
         pass
 
     @abstractmethod
     def count(self) -> int:
-        """Returns the number of stored chunks in the collection."""
+        """Retorna la cantidad de fragmentos almacenados en la colección."""
         pass
 
     @abstractmethod
     def clear(self) -> None:
-        """Clears all stored chunks from the database (mainly for testing/clean restarts)."""
+        """Limpia todos los fragmentos almacenados en la base de datos (para pruebas o reinicios limpios)."""
         pass
 
 
 class ILLMService(ABC):
-    """Abstract interface for interacting with Large Language Models."""
+    """Interfaz abstracta para interactuar con modelos de lenguaje de gran tamaño (LLM)."""
 
     @abstractmethod
     def generate_answer(self, query: str, context: List[Chunk], language: str) -> str:
-        """Generates a response from the LLM based on context chunks and detected language.
+        """Genera una respuesta desde el LLM basada en los fragmentos de contexto y el idioma detectado.
         
         Args:
-            query: User's question.
-            context: Chunks matching the user query.
-            language: The language detected from the user's query.
+            query: Pregunta del usuario.
+            context: Fragmentos que coinciden con la consulta del usuario.
+            language: El idioma detectado de la consulta del usuario.
             
         Returns:
-            The raw text answer conforming to syntax and style guidelines.
+            La respuesta en texto plano que cumple con las directrices de sintaxis y estilo.
         """
         pass

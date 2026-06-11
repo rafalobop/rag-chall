@@ -8,11 +8,11 @@ from app.infrastructure.openai_service import OpenAIService
 class TestAPIIntegration(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # Override repositories with ephemeral/mock versions for testing
-        cls.test_db = ChromaRepository(persist_directory=None) # Ephemeral Client
-        cls.test_llm = OpenAIService(api_key=None) # Runs in Mock Mode
-
-        # Inject into application state
+        # Reemplazar repositorios con versiones efímeras/mock para las pruebas
+        cls.test_db = ChromaRepository(persist_directory=None) # Cliente efímero
+        cls.test_llm = OpenAIService(api_key=None) # Corre en modo Mock
+ 
+        # Inyectar en el estado de la aplicación
         app.state.vector_db = cls.test_db
         app.state.llm_service = cls.test_llm
         
@@ -22,7 +22,7 @@ class TestAPIIntegration(unittest.TestCase):
         self.test_db.clear()
 
     def test_document_indexing_and_query_flow(self):
-        # 1. Index a document dynamically
+        # 1. Indexar un documento dinámicamente
         doc_payload = {
             "content": "Ficción Espacial: En el planeta Zenthoria, Zara descubrió el artefacto místico que brinda armonía.",
             "metadata": {"origin": "test-suite"}
@@ -32,27 +32,27 @@ class TestAPIIntegration(unittest.TestCase):
         self.assertEqual(res_doc.json()["status"], "success")
         self.assertEqual(res_doc.json()["chunks_indexed"], 1)
 
-        # 2. Query the index
+        # 2. Consultar el índice
         query_payload = {"query": "Tell me about Zara in Zenthoria"}
         res_query = self.client.post("/api/v1/query", json=query_payload)
         self.assertEqual(res_query.status_code, 200)
         
         data = res_query.json()
         self.assertEqual(data["query"], "Tell me about Zara in Zenthoria")
-        # Assert format rules on the answer:
-        # Exactly one sentence (contains one period)
+        # Verificar reglas de formato en la respuesta:
+        # Exactamente una oración (contiene un solo punto)
         self.assertEqual(data["answer"].count("."), 1)
-        # Ends with a period
+        # Termina con un punto
         self.assertTrue(data["answer"].endswith("."))
-        # Written in English (detected English from stopword "about/in")
+        # Escrito en inglés (detectado inglés a partir del stopword "about/in")
         self.assertIn("Zara", data["answer"])
         self.assertIn("Zenthoria", data["answer"])
         self.assertIn("explorer", data["answer"].lower())
-        # Sources contains Ficción Espacial
+        # Las fuentes contienen Ficción Espacial
         self.assertEqual(data["sources"], [{"source": "Ficción Espacial"}])
 
     def test_fallback_out_of_context(self):
-        # Query for something completely unrelated
+        # Consultar por algo completamente irrelevante
         query_payload = {"query": "What is the recipe for chocolate chip cookies?"}
         res_query = self.client.post("/api/v1/query", json=query_payload)
         self.assertEqual(res_query.status_code, 200)
