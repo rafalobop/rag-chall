@@ -1,0 +1,29 @@
+# Environment variables
+.env
+.env.local
+
+# Python caches and compiles
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.unittest_cache/
+
+# Local databases and persistence
+data/chroma_db/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Scratch work
+scratch/
+
+# Agent documentation logs (hidden from recruitment repository)
+agent_mcp.md
+agent_dev.md
+agent_qa.md
+technical_defense.md
+git_agent.md
