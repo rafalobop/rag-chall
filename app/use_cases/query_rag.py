@@ -24,7 +24,7 @@ class QueryRAGUseCase:
 
         # Ejecutar guardrails para validar y corregir la respuesta
         try:
-            validated_answer = self.guardrail.validate_and_correct(raw_answer)
+            validated_answer = self.guardrail.validate_and_correct(raw_answer, language)
         except ValueError:
             # Si la corrección falla, retornar el mensaje de respaldo
             validated_answer = "La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚."
@@ -54,7 +54,7 @@ class QueryRAGUseCase:
         
         # Intersección simple de stopwords
         english_words = {"who", "what", "where", "is", "the", "flower", "clock", "hero", "about"}
-        portuguese_words = {"quem", "onde", "flor", "relogio", "heroi", "sobre", "uma", "antigo"}
+        portuguese_words = {"quem", "onde", "relogio", "heroi", "uma", "antigo"}
         
         words = set(re.findall(r'\b\w+\b', text_lower))
         
