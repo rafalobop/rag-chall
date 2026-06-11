@@ -1,4 +1,5 @@
 import os
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI
 from app.infrastructure.chroma_repository import ChromaRepository
 from app.infrastructure.openai_service import OpenAIService
