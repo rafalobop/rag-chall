@@ -12,8 +12,8 @@ We validate two main aspects: **Formatting Constraints (Guardrails)** and **Retr
 |---|---|---|---|---|
 | **QA-01** | Parsing Semántico | `Ficción Espacial: ...` | Parsed into source=`Ficción Espacial`. Metadata contains `source`. | **PASSED** |
 | **QA-02** | Token Control (Large Chunk) | Story exceeding 500 tokens | Subdivided into multiple chunks with overlap. Metadata includes `part` index. | **PASSED** |
-| **QA-03** | Format Constraint | LLM Raw response | Exactly 1 sentence (ends with `.`), contains at least one emoji, written in 3rd person. | **PENDING (Phase 2)** |
-| **QA-04** | Fallback Rule | Out-of-bounds query | Returns: *"La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚."* | **PENDING (Phase 2)** |
+| **QA-03** | Format Constraint | LLM Raw response | Exactly 1 sentence (ends with `.`), contains at least one emoji, written in 3rd person. | **PASSED** |
+| **QA-04** | Fallback Rule | Out-of-bounds query | Returns: *"La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚."* | **PASSED** |
 
 ---
 
