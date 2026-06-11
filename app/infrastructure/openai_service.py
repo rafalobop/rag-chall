@@ -59,14 +59,15 @@ class OpenAIService(ILLMService):
         query_lower = query.lower()
         lang_lower = language.lower()
 
-        # Comprobar si la consulta no coincide con los contextos que tenemos en absoluto
-        context_str = " ".join([c.content for c in context]).lower()
-        
-        is_zara = "zara" in query_lower or "zenthoria" in context_str
-        is_emma = "emma" in query_lower or "reloj" in context_str
-        is_flor = "flor" in query_lower or "luz de luna" in context_str or "selva" in context_str
+        # Usar la categoría del primer fragmento retornado como referencia de tópico
+        top_source = context[0].metadata.get("source", "").lower() if context else ""
 
-        if not (is_zara or is_emma or is_flor):
+        is_zara = "espacial" in top_source or "zara" in query_lower or "zenthoria" in query_lower
+        is_emma = "corto" in top_source or "emma" in query_lower or "reloj" in query_lower
+        is_flor = "deslumbrante" in top_source or "flor" in query_lower or "luz de luna" in query_lower or "selva" in query_lower
+        is_nicholas = "alquimia" in top_source or "nicholas" in query_lower or "nicolas" in query_lower
+
+        if not (is_zara or is_emma or is_flor or is_nicholas):
             return "La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚."
 
         # Respuesta basada en el idioma y el tema
@@ -84,6 +85,13 @@ class OpenAIService(ILLMService):
                 return "A jovem órfã Emma compartilha seu dia adicional de presentes mágicos com a cidade para deixar uma marca indelével em cada coração 🕰️✨."
             else:
                 return "La joven huérfana Emma comparte su día adicional de regalos mágicos con el pueblo para dejar una huella imborrable en cada corazón 🕰️✨."
+        elif is_nicholas:
+            if "en" in lang_lower or "eng" in lang_lower:
+                return "The alchemist Nicholas successfully transmuted lead into pure gold using a secret philosopher's stone 💎✨."
+            elif "pt" in lang_lower or "por" in lang_lower:
+                return "O alquimista Nicholas transmutou com sucesso o chumbo en ouro puro usando uma pedra filosofal secreta 💎✨."
+            else:
+                return "El alquimista Nicholas logró transmutar el plomo en oro puro utilizando una gema filosofal secreta 💎✨."
         else: # is_flor
             if "en" in lang_lower or "eng" in lang_lower:
                 return "The magic flower Luz de Luna blooms at night in the Amazon rainforest guiding creatures with its brightness and healing powers 🌸🌙."
