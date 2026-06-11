@@ -111,15 +111,55 @@ python -m unittest discover tests
 
 ---
 
-## 📋 Pruebas Manuales con Postman
+## 📋 Estructura de Peticiones (Request Bodies)
 
-En la raíz del proyecto se incluye el archivo `postman_collection.json`. Puedes importarlo directamente en Postman para probar todos los casos de uso:
+### 1. Ingestar Documento Dinámico
+* **Método:** `POST`
+* **Endpoint:** `/api/v1/documents`
+* **Encabezado (Header):** `Content-Type: application/json`
+* **Cuerpo (Body JSON):**
+  ```json
+  {
+    "content": "Categoría: Tu texto aquí...",
+    "metadata": {
+      "key": "value" // Opcional: Metadatos adicionales para enriquecer el contexto
+    }
+  }
+  ```
+* **Ejemplo práctico:**
+  ```json
+  {
+    "content": "Ficción Espacial: En el planeta Zenthoria, Zara descubrió el artefacto místico que brinda armonía.",
+    "metadata": {
+      "origin": "manual-test"
+    }
+  }
+  ```
 
-1. **Ingestar un documento dinámico (`POST /api/v1/documents`):**
-   Envía un texto estructurado en el body (ej: `"Ficción Espacial: En Zenthoria..."`) para indexarlo al instante.
-2. **Consulta RAG - Español (`POST /api/v1/query`):**
-   Pregunta por *Zara* o la *Flor Mágica* en español y recibe respuestas validadas por los guardrails corporativos.
-3. **Consulta RAG - Inglés o Portugués:**
-   Comprueba el multilingüismo dinámico haciendo consultas en estos idiomas (ej: *"Tell me about the magic flower"*).
-4. **Consulta RAG - Fallback:**
-   Pregunta algo fuera de contexto (ej: recetas de cocina) y comprueba el retorno del mensaje por defecto de los registros galácticos.
+### 2. Realizar Consulta RAG
+* **Método:** `POST`
+* **Endpoint:** `/api/v1/query`
+* **Encabezado (Header):** `Content-Type: application/json`
+* **Cuerpo (Body JSON):**
+  ```json
+  {
+    "query": "Tu pregunta en lenguaje natural"
+  }
+  ```
+* **Ejemplo práctico:**
+  ```json
+  {
+    "query": "¿Qué descubrió Zara en Zenthoria?"
+  }
+  ```
+
+---
+
+## 📋 Pruebas Manuales con Postman y Web UI
+
+1. **Interfaz Visual Web (Recomendado):**
+   Puedes ingresar desde tu navegador a `http://localhost:8000/` para utilizar el **Galactic RAG Control Center**, una interfaz interactiva integrada que te permite consultar al RAG e indexar documentos viendo el formato esperado de cada petición.
+   
+2. **Colección de Postman:**
+   En la raíz del proyecto se incluye el archivo `postman_collection.json`. Importa este archivo en Postman para tener a mano todos los métodos configurados (ingesta de prueba, consultas multilingües y consulta fallback).
+
