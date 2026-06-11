@@ -4,8 +4,9 @@ This log records the version control actions and policies applied to the RAG Cha
 
 ---
 
-## 📌 Commit Policies
-- **Branching Strategy:** Direct main branch commits for Phase 1 setup.
+## 📌 Commit & Remote Policies
+- **Remote:** `https://github.com/rafalobop/rag-chall.git`
+- **Branching Strategy:** Feature branches pushed to remote. Working branch is `feature/rag-core`.
 - **Commit Naming:** Following conventional commits (e.g. `feat:`, `docs:`, `chore:`).
 
 ---
