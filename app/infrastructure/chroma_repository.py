@@ -6,12 +6,12 @@ from app.domain.entities import Chunk
 from app.domain.interfaces import IVectorDatabase
 
 class ChromaRepository(IVectorDatabase):
-    """Concrete Infrastructure Adapter for ChromaDB."""
+    """Adaptador de infraestructura concreto para ChromaDB."""
 
     def __init__(self, persist_directory: str = None):
-        """Initializes ChromaDB client. Uses EphemeralClient if persist_directory is None."""
+        """Inicializa el cliente de ChromaDB. Usa EphemeralClient si persist_directory es None."""
         if persist_directory:
-            # Create directories if needed
+            # Crear directorios si es necesario
             os.makedirs(persist_directory, exist_ok=True)
             self.client = chromadb.PersistentClient(path=persist_directory)
         else:
@@ -23,7 +23,7 @@ class ChromaRepository(IVectorDatabase):
         )
 
     def add_chunks(self, chunks: List[Chunk]) -> None:
-        """Saves chunks and metadata to ChromaDB."""
+        """Guarda los fragmentos y sus metadatos en ChromaDB."""
         if not chunks:
             return
 
@@ -31,7 +31,7 @@ class ChromaRepository(IVectorDatabase):
         documents = [c.content for c in chunks]
         metadatas = []
         for c in chunks:
-            # We copy and enrich metadata with document_id
+            # Copiamos y enriquecemos los metadatos con el id del documento
             meta = dict(c.metadata)
             meta["document_id"] = c.document_id
             metadatas.append(meta)
@@ -43,7 +43,7 @@ class ChromaRepository(IVectorDatabase):
         )
 
     def query(self, query_text: str, limit: int = 3) -> List[Chunk]:
-        """Queries ChromaDB collection for nearest neighbors using cosine distance."""
+        """Consulta la colección de ChromaDB por los vecinos más cercanos usando distancia coseno."""
         results = self.collection.query(
             query_texts=[query_text],
             n_results=limit
@@ -69,11 +69,11 @@ class ChromaRepository(IVectorDatabase):
         return chunks
 
     def count(self) -> int:
-        """Returns the number of stored documents in the collection."""
+        """Retorna la cantidad de documentos almacenados en la colección."""
         return self.collection.count()
 
     def clear(self) -> None:
-        """Deletes and rebuilds the collection."""
+        """Elimina y vuelve a construir la colección."""
         try:
             self.client.delete_collection("rag_knowledge_base")
         except Exception:

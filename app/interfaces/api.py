@@ -10,12 +10,12 @@ router = APIRouter(prefix="/api/v1")
 
 @router.post("/documents", response_model=DocumentResponse)
 async def create_document(request: Request, doc_req: DocumentRequest):
-    """Indexes a new document dynamically into the vector store."""
+    """Indexa un nuevo documento dinámicamente en el almacenamiento vectorial."""
     try:
         vector_db = request.app.state.vector_db
         use_case = IndexKnowledgeUseCase(vector_db=vector_db)
         
-        # Instantiate domain Document
+        # Instanciar Document del dominio
         doc_id = str(uuid.uuid4())
         document = Document(
             id=doc_id,
@@ -26,12 +26,12 @@ async def create_document(request: Request, doc_req: DocumentRequest):
         num_chunks = use_case.execute(document)
         return DocumentResponse(status="success", chunks_indexed=num_chunks)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to index document: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"No se pudo indexar el documento: {str(e)}")
 
 
 @router.post("/query", response_model=QueryResponse)
 async def query_rag(request: Request, query_req: QueryRequest):
-    """Processes a user query through the RAG pipeline."""
+    """Procesa una consulta de usuario a través de todo el pipeline RAG."""
     try:
         vector_db = request.app.state.vector_db
         llm_service = request.app.state.llm_service
@@ -45,4 +45,4 @@ async def query_rag(request: Request, query_req: QueryRequest):
             sources=[{"source": s["source"]} for s in result.sources]
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Query execution failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Falló la ejecución de la consulta: {str(e)}")

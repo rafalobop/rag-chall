@@ -5,19 +5,19 @@ from app.domain.entities import Chunk, Document
 from app.domain.interfaces import IVectorDatabase
 
 def count_tokens(text: str) -> int:
-    """Helper to count or estimate token count using tiktoken or simple fallback."""
+    """Función de ayuda para contar o estimar la cantidad de tokens usando tiktoken o un estimador simple."""
     try:
         # pyrefly: ignore [missing-import]
         import tiktoken
         encoding = tiktoken.get_encoding("cl100k_base")
         return len(encoding.encode(text))
     except ImportError:
-        # Fallback approximation: 1 word ~ 1.3 tokens
+        # Estimación de respaldo: 1 palabra ~ 1.3 tokens
         return int(len(text.split()) * 1.3)
 
 
 def split_text_recursively(text: str, max_tokens: int = 500, overlap_tokens: int = 50) -> List[str]:
-    """Recursively splits a text into smaller segments that fit within max_tokens."""
+    """Divide un texto recursivamente en segmentos más pequeños que quepan dentro de max_tokens."""
     if count_tokens(text) <= max_tokens:
         return [text]
 
@@ -27,7 +27,7 @@ def split_text_recursively(text: str, max_tokens: int = 500, overlap_tokens: int
         if count_tokens(txt) <= max_tokens:
             return [txt]
         if not separators_list:
-            # Character fallback if no separators left
+            # Respaldo por caracteres si no quedan separadores
             char_limit = int(max_tokens * 3.5)
             char_overlap = int(overlap_tokens * 3.5)
             chunks = []
@@ -52,20 +52,20 @@ def split_text_recursively(text: str, max_tokens: int = 500, overlap_tokens: int
             part_tokens = count_tokens(part_txt)
 
             if part_tokens > max_tokens:
-                # Flush current accumulator
+                # Vaciar el acumulador actual
                 if current_chunk:
                     chunks.append(sep.join(current_chunk))
                     current_chunk = []
                     current_tokens = 0
-                # Split the over-sized part with next separators
+                # Dividir la parte de gran tamaño con los siguientes separadores
                 sub_parts = _split(part, separators_list[1:])
                 chunks.extend(sub_parts)
             else:
-                # Check if it fits
+                # Comprobar si cabe
                 if current_tokens + part_tokens > max_tokens:
                     if current_chunk:
                         chunks.append(sep.join(current_chunk))
-                    # Retain some overlap
+                    # Retener algo de solapamiento
                     overlap_chunk = []
                     overlap_t = 0
                     for p in reversed(current_chunk):
@@ -90,7 +90,7 @@ def split_text_recursively(text: str, max_tokens: int = 500, overlap_tokens: int
 
 
 class IndexKnowledgeUseCase:
-    """Orchestrates document reading, semantic paragraph chunking, and database indexing."""
+    """Orquesta la lectura de documentos, el chunking semántico por párrafos y la indexación en la base de datos."""
 
     def __init__(self, vector_db: IVectorDatabase, max_tokens: int = 500, overlap_tokens: int = 50):
         self.vector_db = vector_db
@@ -98,14 +98,14 @@ class IndexKnowledgeUseCase:
         self.overlap_tokens = overlap_tokens
 
     def execute(self, document: Document) -> int:
-        """Parses the document, extracts categories, checks token limits, and indexes in Vector DB."""
+        """Procesa el documento, extrae categorías, controla límites de tokens e indexa en la base de datos vectorial."""
         chunks = self._parse_semantic_chunks(document)
         if chunks:
             self.vector_db.add_chunks(chunks)
         return len(chunks)
 
     def _parse_semantic_chunks(self, document: Document) -> List[Chunk]:
-        """Splits document content by lines/stories, extracting titles as sources."""
+        """Divide el contenido del documento por líneas/relatos, extrayendo los títulos como fuentes."""
         chunks: List[Chunk] = []
         lines = document.content.strip().split("\n")
 
@@ -114,7 +114,7 @@ class IndexKnowledgeUseCase:
             if not line_str:
                 continue
 
-            # Standard format detection: "Category: Content"
+            # Detección de formato estándar: "Categoría: Contenido"
             if ":" in line_str:
                 source, content = line_str.split(":", 1)
                 source = source.strip()
@@ -123,7 +123,7 @@ class IndexKnowledgeUseCase:
                 source = "General"
                 content = line_str
 
-            # Check if the content part exceeds token limit
+            # Comprobar si la parte de contenido supera el límite de tokens
             content_tokens = count_tokens(content)
             if content_tokens > self.max_tokens:
                 sub_segments = split_text_recursively(content, self.max_tokens, self.overlap_tokens)

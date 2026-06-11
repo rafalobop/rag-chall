@@ -8,36 +8,36 @@ from app.use_cases.index_knowledge import IndexKnowledgeUseCase
 from app.interfaces.api import router
 
 app = FastAPI(
-    title="RAG Challenge API",
-    description="Production-grade, clean architecture RAG API with formatting guardrails.",
+    title="API de Desafío RAG",
+    description="API RAG con guardrails de formato de nivel de producción bajo Arquitectura Limpia.",
     version="1.0.0"
 )
 
-# Configuration
+# Configuración
 CHROMA_DIR = os.getenv("CHROMA_PERSIST_DIR", "data/chroma_db")
 KNOWLEDGE_FILE = os.getenv("KNOWLEDGE_FILE", "data/knowledge_base.txt")
 
-# Initialize infrastructure adapters
+# Inicializar los adaptadores de infraestructura
 vector_db = ChromaRepository(persist_directory=CHROMA_DIR)
 llm_service = OpenAIService()
 
-# Attach adapters to app state
+# Adjuntar los adaptadores al estado de la aplicación
 app.state.vector_db = vector_db
 app.state.llm_service = llm_service
 
-# Include routing
+# Incluir las rutas
 app.include_router(router)
 
 @app.on_event("startup")
 def startup_populate_db():
-    """Populates the vector store with initial knowledge if it is empty."""
+    """Puebla la base de datos vectorial con el conocimiento inicial si está vacía."""
     try:
         current_count = vector_db.count()
-        print(f"[Startup] Current vector store document count: {current_count}")
+        print(f"[Startup] Cantidad actual de documentos en la base de datos vectorial: {current_count}")
         
         if current_count == 0:
             if os.path.exists(KNOWLEDGE_FILE):
-                print(f"[Startup] Loading default knowledge base from {KNOWLEDGE_FILE}...")
+                print(f"[Startup] Cargando base de conocimientos por defecto desde {KNOWLEDGE_FILE}...")
                 with open(KNOWLEDGE_FILE, "r", encoding="utf-8") as f:
                     content = f.read()
                 
@@ -49,8 +49,8 @@ def startup_populate_db():
                 
                 use_case = IndexKnowledgeUseCase(vector_db=vector_db)
                 num_chunks = use_case.execute(doc)
-                print(f"[Startup] Ingestion complete. Created {num_chunks} semantic chunks.")
+                print(f"[Startup] Ingesta completada. Se crearon {num_chunks} fragmentos semánticos.")
             else:
-                print(f"[Startup] Warning: Knowledge file not found at {KNOWLEDGE_FILE}")
+                print(f"[Startup] Advertencia: Archivo de conocimiento no encontrado en {KNOWLEDGE_FILE}")
     except Exception as e:
-        print(f"[Startup] Failed to populate vector store: {str(e)}")
+        print(f"[Startup] No se pudo poblar la base de datos vectorial: {str(e)}")

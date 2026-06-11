@@ -6,7 +6,7 @@ from app.domain.entities import Chunk
 from app.domain.interfaces import ILLMService
 
 class OpenAIService(ILLMService):
-    """Concrete Infrastructure Adapter for OpenAI LLM services with offline fallback."""
+    """Adaptador de infraestructura concreto para servicios LLM de OpenAI con respaldo offline."""
 
     def __init__(self, api_key: str = None):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
@@ -16,7 +16,7 @@ class OpenAIService(ILLMService):
             self.client = None
 
     def generate_answer(self, query: str, context: List[Chunk], language: str) -> str:
-        # Check if context is completely empty
+        # Comprobar si el contexto está completamente vacío
         if not context:
             return "La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚."
 
@@ -51,15 +51,15 @@ class OpenAIService(ILLMService):
             )
             return response.choices[0].message.content.strip()
         except Exception:
-            # Fallback to mock on connection or key issues
+            # Respaldo al mock en caso de problemas de conexión o de API key
             return self._mock_generate_answer(query, context, language)
 
     def _mock_generate_answer(self, query: str, context: List[Chunk], language: str) -> str:
-        """Fully compliant mock generator for testing without internet or API key."""
+        """Generador mock completamente funcional para pruebas sin internet ni API key."""
         query_lower = query.lower()
         lang_lower = language.lower()
 
-        # Check if the query doesn't match the contexts we have at all
+        # Comprobar si la consulta no coincide con los contextos que tenemos en absoluto
         context_str = " ".join([c.content for c in context]).lower()
         
         is_zara = "zara" in query_lower or "zenthoria" in context_str
@@ -69,7 +69,7 @@ class OpenAIService(ILLMService):
         if not (is_zara or is_emma or is_flor):
             return "La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚."
 
-        # Response based on language and topic
+        # Respuesta basada en el idioma y el tema
         if is_zara:
             if "en" in lang_lower or "eng" in lang_lower:
                 return "The explorer Zara travels through hostile planets seeking to unravel the secrets of the ancient Zenthoria artifact to achieve galactic peace 🚀🌌."
@@ -88,6 +88,6 @@ class OpenAIService(ILLMService):
             if "en" in lang_lower or "eng" in lang_lower:
                 return "The magic flower Luz de Luna blooms at night in the Amazon rainforest guiding creatures with its brightness and healing powers 🌸🌙."
             elif "pt" in lang_lower or "por" in lang_lower:
-                return "A flor mágica Luz de Luna floresce à noite na floresta amazônica guiando criaturas com seu brilho e poderes de cura 🌸🌙."
+                return "A flor mágica Luz de Luna floresce à noite na floresta amazônica guiando criaturas com seu brillo e poderes de cura 🌸🌙."
             else:
                 return "La flor mágica Luz de Luna florece de noche en la selva amazónica guiando a las criaturas con su brillo y poderes curativos 🌸🌙."

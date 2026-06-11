@@ -26,7 +26,7 @@ class TestSemanticChunking(unittest.TestCase):
         self.db = MockVectorDB()
 
     def test_semantic_splitting_correct_sources(self):
-        # Setup documents
+        # Preparación de documentos
         content = (
             "Ficción Espacial: En la lejana galaxia de Zenthoria.\n"
             "Naturaleza Deslumbrante: La flor mágica Luz de Luna florece de noche."
@@ -45,16 +45,16 @@ class TestSemanticChunking(unittest.TestCase):
         content = "Ficción Tecnológica: Esta historia es extremadamente larga y sobrepasará el límite establecido."
         doc = Document(id="doc2", content=content)
         
-        # Set max_tokens to a small number (e.g., 5 tokens) to trigger the recursive splitter
+        # Ajustar max_tokens a un número pequeño (ej. 5 tokens) para disparar el divisor recursivo
         use_case = IndexKnowledgeUseCase(vector_db=self.db, max_tokens=5, overlap_tokens=1)
         num_chunks = use_case.execute(doc)
         
-        # Should split into multiple chunks
+        # Debería dividirse en múltiples fragmentos
         self.assertGreater(num_chunks, 1)
         for chunk in self.db.chunks:
             self.assertEqual(chunk.metadata["source"], "Ficción Tecnológica")
             self.assertIn("part", chunk.metadata)
-            # Verify each chunk is properly prefixed with its source
+            # Verificar que cada fragmento tenga el prefijo correcto de su categoría/source
             self.assertTrue(chunk.content.startswith("Ficción Tecnológica: "))
 
 

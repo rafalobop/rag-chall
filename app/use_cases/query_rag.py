@@ -4,7 +4,7 @@ from app.domain.interfaces import IVectorDatabase, ILLMService
 from app.use_cases.guardrails import GuardrailValidator
 
 class QueryRAGUseCase:
-    """Orchestrator for the entire Retrieval-Augmented Generation (RAG) pipeline."""
+    """Orquestador para todo el pipeline de generación aumentada por recuperación (RAG)."""
 
     def __init__(self, vector_db: IVectorDatabase, llm_service: ILLMService, guardrail_validator: GuardrailValidator = None):
         self.vector_db = vector_db
@@ -12,24 +12,24 @@ class QueryRAGUseCase:
         self.guardrail = guardrail_validator or GuardrailValidator()
 
     def execute(self, query_text: str) -> RAGResponse:
-        """Executes RAG pipeline: retrieves chunks, queries LLM, runs guardrails, and maps to entity."""
-        # Detect language (simple heuristics for demo/testing)
+        """Ejecuta el pipeline RAG: recupera fragmentos, consulta al LLM, ejecuta guardrails y mapea a la entidad de dominio."""
+        # Detectar idioma (heurística simple para pruebas)
         language = self._detect_language(query_text)
 
-        # Retrieve relevant chunks (retrieve top 3)
+        # Recuperar fragmentos relevantes (recupera los 3 principales)
         retrieved_chunks = self.vector_db.query(query_text, limit=3)
 
-        # Generate answer from LLM (or mock)
+        # Generar respuesta desde el LLM (o mock)
         raw_answer = self.llm_service.generate_answer(query_text, retrieved_chunks, language)
 
-        # Run guardrails to validate and correct response
+        # Ejecutar guardrails para validar y corregir la respuesta
         try:
             validated_answer = self.guardrail.validate_and_correct(raw_answer)
         except ValueError:
-            # If correction fails, return the fallback message
+            # Si la corrección falla, retornar el mensaje de respaldo
             validated_answer = "La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚."
 
-        # Deduplicate sources from chunks
+        # Eliminar duplicados de fuentes de los fragmentos
         sources: List[Dict[str, Any]] = []
         seen_sources = set()
         for chunk in retrieved_chunks:
@@ -38,7 +38,7 @@ class QueryRAGUseCase:
                 seen_sources.add(src)
                 sources.append({"source": src})
 
-        # If answer is the fallback, clear sources
+        # Si la respuesta es la de respaldo, limpiar las fuentes
         if validated_answer == "La información solicitada sobre ese tema no se encuentra disponible en los registros galácticos 🚫📚.":
             sources = []
 
@@ -49,10 +49,10 @@ class QueryRAGUseCase:
         )
 
     def _detect_language(self, text: str) -> str:
-        """Determines if query is in Spanish, English, or Portuguese using common stopwords."""
+        """Determina si la consulta está en español, inglés o portugués usando palabras clave comunes."""
         text_lower = text.lower()
         
-        # Simple stopword intersection
+        # Intersección simple de stopwords
         english_words = {"who", "what", "where", "is", "the", "flower", "clock", "hero", "about"}
         portuguese_words = {"quem", "onde", "flor", "relogio", "heroi", "sobre", "uma", "antigo"}
         
@@ -65,5 +65,5 @@ class QueryRAGUseCase:
         else:
             return "Spanish"
 
-# Helper for text pattern matching
+# Ayudante para coincidencia de patrones de texto
 import re
